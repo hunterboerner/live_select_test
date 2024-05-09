@@ -1,0 +1,42 @@
+<.header>
+  Listing Foobars
+  <:actions>
+    <.link patch={~p"/foobars/new"}>
+      <.button>New Foobar</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="foobars"
+  rows={@streams.foobars}
+  row_click={fn {_id, foobar} -> JS.navigate(~p"/foobars/#{foobar}") end}
+>
+  <:col :let={{_id, foobar}} label="Name"><%= foobar.name %></:col>
+  <:col :let={{_id, foobar}} label="Other"><%= foobar.other_id %></:col>
+  <:action :let={{_id, foobar}}>
+    <div class="sr-only">
+      <.link navigate={~p"/foobars/#{foobar}"}>Show</.link>
+    </div>
+    <.link patch={~p"/foobars/#{foobar}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, foobar}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: foobar.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="foobar-modal" show on_cancel={JS.patch(~p"/foobars")}>
+  <.live_component
+    module={LiveSelectTestWeb.FoobarLive.FormComponent}
+    id={@foobar.id || :new}
+    title={@page_title}
+    action={@live_action}
+    foobar={@foobar}
+    patch={~p"/foobars"}
+  />
+</.modal>

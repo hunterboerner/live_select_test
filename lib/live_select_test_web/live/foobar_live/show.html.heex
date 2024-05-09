@@ -1,0 +1,27 @@
+<.header>
+  Foobar <%= @foobar.id %>
+  <:subtitle>This is a foobar record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/foobars/#{@foobar}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit foobar</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Name"><%= @foobar.name %></:item>
+  <:item title="Other"><%= @foobar.other_id %></:item>
+</.list>
+
+<.back navigate={~p"/foobars"}>Back to foobars</.back>
+
+<.modal :if={@live_action == :edit} id="foobar-modal" show on_cancel={JS.patch(~p"/foobars/#{@foobar}")}>
+  <.live_component
+    module={LiveSelectTestWeb.FoobarLive.FormComponent}
+    id={@foobar.id}
+    title={@page_title}
+    action={@live_action}
+    foobar={@foobar}
+    patch={~p"/foobars/#{@foobar}"}
+  />
+</.modal>
